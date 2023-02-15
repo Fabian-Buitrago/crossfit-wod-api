@@ -3,14 +3,11 @@ const workoutController = require("../../controllers/workoutController");
 
 const router = express.Router();
 
-router.get("/", workoutController.getAllWorkouts);
-
-router.get("/:workoutId", workoutController.getOneWorkout);
-
-router.post("/", workoutController.createNewWorkout);
-
-router.patch("/:workoutId", workoutController.updateOneWorkout);
-
-router.delete("/:workoutId", workoutController.deleteOneWorkout);
+router
+  .get("/", workoutController.getAllWorkouts)
+  .get("/:workoutId", workoutController.getOneWorkout)
+  .post("/", workoutController.createNewWorkout)
+  .patch("/:workoutId", workoutController.updateOneWorkout)
+  .delete("/:workoutId", workoutController.deleteOneWorkout);
 
 module.exports = router;
