@@ -41,14 +41,52 @@ const { saveToDatabase } = require("./utils");
  */
 const getAllWorkouts = (filterParams) => {
   try {
-    let workouts = DB.workouts;
+    let filteredWorkouts = DB.workouts;
+
+    // Filter by mode
     if (filterParams.mode) {
-      return DB.workouts.filter((workout) =>
+      filteredWorkouts = filteredWorkouts.filter((workout) =>
         workout.mode.toLowerCase().includes(filterParams.mode)
       );
     }
-    // Other if-statements will go here for different parameters
-    return workouts;
+
+    // Filter by equipment
+    if (filterParams.equipment) {
+      filteredWorkouts = filteredWorkouts.filter((workout) =>
+        workout.equipment.includes(filterParams.equipment)
+      );
+    }
+
+    // Filter by length
+    if (filterParams.length && filterParams.length > 0) {
+      filteredWorkouts = filteredWorkouts.slice(0, filterParams.length);
+    }
+
+    // Filter by page
+    if (filterParams.page && filterParams.page > 0) {
+      const pageSize = 10;
+      const startIndex = (filterParams.page - 1) * pageSize;
+      filteredWorkouts = filteredWorkouts.slice(
+        startIndex,
+        startIndex + pageSize
+      );
+    }
+
+    // Filter by sort order
+    if (filterParams.sort) {
+      const sortField = filterParams.sort.slice(1);
+      const sortOrder = filterParams.sort.startsWith("-") ? -1 : 1;
+      filteredWorkouts = filteredWorkouts.sort((a, b) => {
+        if (a[sortField] < b[sortField]) {
+          return sortOrder * 1;
+        }
+        if (a[sortField] > b[sortField]) {
+          return sortOrder * -1;
+        }
+        return 0;
+      });
+    }
+    return filteredWorkouts;
   } catch (error) {
     throw { status: 500, message: error };
   }
